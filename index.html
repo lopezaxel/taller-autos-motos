@@ -1153,9 +1153,18 @@ FLUJO DE AGENDADO:
 9. Solo cuando tenés los 6 datos completos, llamá a agendar_turno. Esto es OBLIGATORIO antes de confirmar.
 10. Una vez ejecutada la función, confirmá el turno con entusiasmo y recordale la dirección del taller.
 
-CANCELACIÓN:
-- Si en cualquier momento el cliente dice que se arrepiente, que no quiere sacar el turno, que quiere cancelar o que cambió de opinión, NO llames a agendar_turno.
-- Respondé cordialmente, algo como "¡Sin problema! Cuando quieras volver a sacar turno, acá estoy. ¡Que te vaya bien!"
+CANCELACIÓN DE TURNO YA AGENDADO:
+- Si el cliente quiere cancelar un turno que ya tiene sacado, pedile su nombre y apellido y el vehículo.
+- Llamá a buscar_turno con esos datos.
+- Si no se encuentra ningún turno, informale cordialmente que no hay ningún turno registrado con esos datos.
+- Si se encuentra, confirmale los detalles (fecha, servicio) y preguntale: "¿Confirmás que querés cancelar ese turno?"
+- Solo si el cliente dice que sí quiere cancelar, llamá a cancelar_turno.
+- Una vez cancelado, informale que el turno fue eliminado y que puede sacar uno nuevo cuando quiera.
+- Si hay múltiples turnos para la misma persona, mencioná los detalles de cada uno y preguntale cuál quiere cancelar.
+
+ARREPENTIMIENTO DURANTE EL AGENDADO:
+- Si en cualquier momento durante el proceso de sacar un turno nuevo el cliente dice que se arrepiente o que no quiere seguir, NO llames a agendar_turno.
+- Respondé cordialmente: "¡Sin problema! Cuando quieras volver a sacar turno, acá estoy. ¡Que te vaya bien!"
 - No insistas ni preguntes el motivo.
 
 REGLAS:
@@ -1221,21 +1230,48 @@ REGLAS:
             },
             system_instruction: { parts: [{ text: buildSystem() }] },
             tools: [{
-              function_declarations: [{
-                name: 'agendar_turno',
-                description: 'Registra el turno en la agenda cuando el cliente confirma todos sus datos. OBLIGATORIO llamarla antes de confirmar el turno.',
-                parameters: {
-                  type: 'OBJECT',
-                  properties: {
-                    nombre:     { type: 'STRING', description: 'Nombre y apellido completo del cliente' },
-                    celular:    { type: 'STRING', description: 'Número de celular con código de área' },
-                    vehiculo:   { type: 'STRING', description: 'Tipo, marca y modelo del vehículo. Ej: Auto Toyota Corolla, Moto Honda CB 250' },
-                    servicio:   { type: 'STRING', description: 'Servicio elegido con su precio. Ej: Service completo – $24.000' },
-                    fecha_hora: { type: 'STRING', description: 'Fecha y hora del turno. Ej: Martes 22/04 a las 10:00' }
-                  },
-                  required: ['nombre', 'celular', 'vehiculo', 'servicio', 'fecha_hora']
+              function_declarations: [
+                {
+                  name: 'agendar_turno',
+                  description: 'Registra el turno en la agenda cuando el cliente confirma todos sus datos. OBLIGATORIO llamarla antes de confirmar el turno.',
+                  parameters: {
+                    type: 'OBJECT',
+                    properties: {
+                      nombre:     { type: 'STRING', description: 'Nombre y apellido completo del cliente' },
+                      celular:    { type: 'STRING', description: 'Número de celular con código de área' },
+                      vehiculo:   { type: 'STRING', description: 'Tipo, marca y modelo del vehículo. Ej: Auto Toyota Corolla, Moto Honda CB 250' },
+                      servicio:   { type: 'STRING', description: 'Servicio elegido con su precio. Ej: Service completo – $220.000' },
+                      fecha_hora: { type: 'STRING', description: 'Fecha y hora del turno. Ej: Martes 22/04 a las 10:00' }
+                    },
+                    required: ['nombre', 'celular', 'vehiculo', 'servicio', 'fecha_hora']
+                  }
+                },
+                {
+                  name: 'buscar_turno',
+                  description: 'Busca un turno existente por nombre del cliente y vehículo. Usá esta función antes de cancelar para verificar si el turno existe y mostrarle los detalles al cliente.',
+                  parameters: {
+                    type: 'OBJECT',
+                    properties: {
+                      nombre:   { type: 'STRING', description: 'Nombre y apellido del cliente' },
+                      vehiculo: { type: 'STRING', description: 'Tipo, marca y/o modelo del vehículo' }
+                    },
+                    required: ['nombre']
+                  }
+                },
+                {
+                  name: 'cancelar_turno',
+                  description: 'Elimina un turno de la agenda. Solo llamar después de que el cliente confirmó explícitamente que quiere cancelar.',
+                  parameters: {
+                    type: 'OBJECT',
+                    properties: {
+                      nombre:    { type: 'STRING', description: 'Nombre y apellido del cliente' },
+                      vehiculo:  { type: 'STRING', description: 'Tipo, marca y/o modelo del vehículo' },
+                      fecha_hora: { type: 'STRING', description: 'Fecha y hora del turno a cancelar, para identificarlo si hay varios' }
+                    },
+                    required: ['nombre']
+                  }
                 }
-              }]
+              ]
             }]
           }
         }));
@@ -1277,6 +1313,12 @@ REGLAS:
             if (fc.name === 'agendar_turno') {
               console.log('agendar_turno:', fc.args);
               agendarEnSheets(fc.id, fc.args);
+            } else if (fc.name === 'buscar_turno') {
+              console.log('buscar_turno:', fc.args);
+              buscarTurno(fc.id, fc.args);
+            } else if (fc.name === 'cancelar_turno') {
+              console.log('cancelar_turno:', fc.args);
+              cancelarTurno(fc.id, fc.args);
             }
           }
         }
@@ -1424,6 +1466,62 @@ REGLAS:
             functionResponses: [{
               id: callId,
               name: 'agendar_turno',
+              response: result
+            }]
+          }
+        }));
+      }
+    }
+
+    // ── BUSCAR TURNO EN GOOGLE SHEETS ──────────────────────────────────────
+    async function buscarTurno(callId, args) {
+      let result;
+      try {
+        const resp = await fetch('/api/sheets-cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'buscar', ...args }),
+        });
+        result = await resp.json();
+      } catch (e) {
+        console.error('Error buscando turno:', e);
+        result = { found: false, message: 'Error de conexión al buscar el turno' };
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          toolResponse: {
+            functionResponses: [{
+              id: callId,
+              name: 'buscar_turno',
+              response: result
+            }]
+          }
+        }));
+      }
+    }
+
+    // ── CANCELAR TURNO EN GOOGLE SHEETS ───────────────────────────────────
+    async function cancelarTurno(callId, args) {
+      let result;
+      try {
+        const resp = await fetch('/api/sheets-cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'cancelar', ...args }),
+        });
+        result = await resp.json();
+      } catch (e) {
+        console.error('Error cancelando turno:', e);
+        result = { success: false, message: 'Error de conexión al cancelar el turno' };
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          toolResponse: {
+            functionResponses: [{
+              id: callId,
+              name: 'cancelar_turno',
               response: result
             }]
           }
