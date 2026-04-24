@@ -4,19 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Taller el Pistón – Mecánica Integral</title>
+  <title>Super Profesor de IA</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;900&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
   <style>
     :root {
-      --blue: #2563EB;
-      --blue-soft: #60A5FA;
-      --blue-dim: rgba(37, 99, 235, 0.18);
-      --bg: #0A0B0F;
-      --surface: #10121A;
-      --surface2: #14161F;
-      --border: rgba(37, 99, 235, 0.18);
+      --purple: #7C3AED;
+      --purple-soft: #A78BFA;
+      --purple-dim: rgba(124, 58, 237, 0.18);
+      --gold: #F59E0B;
+      --gold-soft: #FCD34D;
+      --bg: #08090E;
+      --surface: #0F1019;
+      --surface2: #13141F;
+      --border: rgba(124, 58, 237, 0.2);
       --text: #E8EAF2;
       --muted: rgba(232, 234, 242, 0.45);
     }
@@ -29,8 +31,11 @@
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
+    /* Grain texture overlay */
     body::after {
       content: '';
       position: fixed;
@@ -41,60 +46,61 @@
       opacity: .4;
     }
 
-    /* HEADER */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.4rem 2.5rem;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(10, 11, 15, 0.94);
-      backdrop-filter: blur(16px);
+    /* Ambient background orbs */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.12;
+    }
+    .ambient-blob-1 {
+      width: 700px; height: 700px;
+      background: var(--purple);
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      animation: blobFloat 8s ease-in-out infinite;
+    }
+    .ambient-blob-2 {
+      width: 400px; height: 400px;
+      background: var(--gold);
+      bottom: -100px; right: -100px;
+      animation: blobFloat 10s ease-in-out infinite reverse;
+    }
+    .ambient-blob-3 {
+      width: 300px; height: 300px;
+      background: var(--purple-soft);
+      bottom: 20%; left: -80px;
+      animation: blobFloat 12s ease-in-out infinite;
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: .7rem;
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
+    @keyframes blobFloat {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50%       { transform: translateX(-50%) scale(1.08) translateY(-20px); }
     }
 
-    .logo-icon {
-      width: 32px;
-      height: 32px;
-      background: var(--blue);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
+    /* Grid decoration */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,.035) 1px, transparent 1px);
+      background-size: 70px 70px;
+      mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 75%);
     }
-
-    .logo em { color: var(--blue-soft); font-style: normal; }
-
-    nav { display: flex; gap: 1.8rem; }
-
-    nav a {
-      font-size: .72rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color .25s;
-    }
-
-    nav a:hover { color: var(--blue-soft); }
 
     /* HERO */
     .hero {
-      min-height: 88vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -102,426 +108,165 @@
       text-align: center;
       padding: 4rem 2rem;
       position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 60% 50% at 50% 70%, rgba(37, 99, 235, 0.1) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 30% at 20% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 60%);
-    }
-
-    /* Grid lines decoration */
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(37,99,235,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(37,99,235,.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
-    }
-
-    .hero-eyebrow {
-      font-size: .62rem;
-      letter-spacing: .35em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-      margin-bottom: 1.8rem;
-      opacity: 0;
-      animation: up .7s .1s forwards;
-      position: relative;
       z-index: 1;
     }
 
-    .hero h1 {
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .65rem;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--purple-soft);
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      padding: .45rem 1.2rem;
+      border-radius: 100px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: up .7s .1s forwards;
+    }
+
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple-soft);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: .3; }
+    }
+
+    .hero-title {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(3rem, 9vw, 7rem);
-      font-weight: 700;
-      line-height: 1.0;
-      max-width: 860px;
+      font-weight: 900;
+      font-size: clamp(3.5rem, 13vw, 9rem);
+      line-height: .92;
       text-transform: uppercase;
       letter-spacing: .02em;
       opacity: 0;
       animation: up .7s .2s forwards;
-      position: relative;
-      z-index: 1;
     }
 
-    .hero h1 em {
-      color: var(--blue-soft);
-      font-style: normal;
+    .hero-title .line-1 { display: block; color: var(--text); }
+    .hero-title .line-2 { display: block; color: var(--text); }
+    .hero-title .line-3 {
       display: block;
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold), var(--purple-soft));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero-sub {
-      margin-top: 1.5rem;
-      font-size: .88rem;
+      margin-top: 2rem;
+      font-size: .9rem;
       line-height: 1.9;
       color: var(--muted);
-      max-width: 500px;
+      max-width: 520px;
       opacity: 0;
-      animation: up .7s .3s forwards;
-      position: relative;
-      z-index: 1;
+      animation: up .7s .35s forwards;
     }
 
     .hero-cta {
-      margin-top: 3rem;
+      margin-top: 3.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 1.2rem;
       opacity: 0;
-      animation: up .7s .4s forwards;
-      position: relative;
-      z-index: 1;
+      animation: up .7s .5s forwards;
     }
 
     .cta-main {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: .9rem;
-      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      gap: 1rem;
+      background: linear-gradient(135deg, var(--purple), #5B21B6);
       color: #fff;
       border: none;
       cursor: pointer;
       font-family: 'DM Sans', sans-serif;
-      font-size: .8rem;
+      font-size: .82rem;
       font-weight: 500;
-      letter-spacing: .12em;
+      letter-spacing: .14em;
       text-transform: uppercase;
-      padding: 1rem 2.2rem;
+      padding: 1.1rem 2.6rem;
       border-radius: 100px;
-      box-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 0 50px rgba(124, 58, 237, 0.35);
       transition: transform .2s, box-shadow .2s;
     }
 
     .cta-main:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 70px rgba(37, 99, 235, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 0 80px rgba(124, 58, 237, 0.55);
     }
 
-    .cta-orb-mini {
-      width: 28px;
-      height: 28px;
+    .cta-mini-orb {
+      width: 30px; height: 30px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #93c5fd, var(--blue));
+      background: radial-gradient(circle at 35% 35%, var(--purple-soft), var(--purple));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: .85rem;
+      font-size: .9rem;
       animation: miniPulse 2s ease-in-out infinite;
     }
 
     @keyframes miniPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, .5) }
-      50%       { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0) }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, .6) }
+      50%       { box-shadow: 0 0 0 7px rgba(124, 58, 237, 0) }
     }
 
     .cta-hint {
       font-size: .68rem;
       color: var(--muted);
       letter-spacing: .1em;
-      display: flex;
-      align-items: center;
-      gap: .6rem;
     }
 
-    .cta-hint::before,
-    .cta-hint::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-      width: 40px;
-    }
-
-    /* DIVIDER */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      padding: 0 2.5rem;
-    }
-
-    .divider .line { flex: 1; height: 1px; background: var(--border); }
-
-    .divider .label {
-      font-size: .6rem;
-      letter-spacing: .3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    /* SERVICES */
-    #servicios {
-      padding: 5rem 2.5rem 6rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .services-header {
-      text-align: center;
-      margin-bottom: 3.5rem;
-    }
-
-    .services-header h2 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-
-    .services-header h2 span { color: var(--blue-soft); }
-
-    .services-header p {
-      margin-top: .7rem;
-      color: var(--muted);
-      font-size: .82rem;
-      letter-spacing: .05em;
-    }
-
-    .vehicle-tabs {
+    /* FEATURES ROW */
+    .features {
       display: flex;
       justify-content: center;
-      gap: .5rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .tab-btn {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .6rem 1.6rem;
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: .75rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all .25s;
-    }
-
-    .tab-btn.active {
-      background: var(--blue-dim);
-      border-color: var(--blue);
-      color: var(--blue-soft);
-    }
-
-    .tab-btn:hover:not(.active) {
-      border-color: rgba(37,99,235,.4);
-      color: var(--text);
-    }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
-
-    .service-card {
-      background: var(--surface);
-      padding: 2.2rem;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
       position: relative;
-      overflow: hidden;
-      transition: background .3s;
+      z-index: 1;
     }
 
-    .service-card:hover { background: var(--surface2); }
-
-    .service-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--blue), transparent);
-      transform: scaleX(0);
-      transform-origin: center;
-      transition: transform .4s;
+    .feature {
+      flex: 1;
+      max-width: 280px;
+      padding: 2.2rem 2rem;
+      text-align: center;
+      border-right: 1px solid var(--border);
     }
+    .feature:last-child { border-right: none; }
 
-    .service-card:hover::before { transform: scaleX(1); }
-
-    .card-emoji {
-      font-size: 1.5rem;
-      margin-bottom: 1.2rem;
+    .feature-icon {
+      font-size: 1.8rem;
+      margin-bottom: .8rem;
       display: block;
     }
 
-    .card-num {
-      font-size: .58rem;
-      letter-spacing: .25em;
+    .feature-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
       text-transform: uppercase;
-      color: var(--blue-soft);
+      letter-spacing: .06em;
+      color: var(--text);
       margin-bottom: .4rem;
     }
 
-    .card-title {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      margin-bottom: 1.4rem;
-    }
-
-    .price-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: .5rem;
-    }
-
-    .price-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: .8rem;
-      padding-bottom: .5rem;
-      border-bottom: 1px solid rgba(37, 99, 235, 0.08);
-      gap: .8rem;
-    }
-
-    .price-list li:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .price-name { color: var(--muted); flex: 1; }
-    .price-dur  { color: var(--muted); font-size: .7rem; opacity: .7; white-space: nowrap; }
-    .price-val  { color: var(--blue-soft); font-weight: 500; white-space: nowrap; }
-
-    /* Vehicle panel */
-    .vehicle-panel { display: none; }
-    .vehicle-panel.active { display: block; }
-
-    /* NITRO SECTION */
-    .nitro-section {
-      text-align: center;
-      padding: 4rem 2rem 6rem;
-      border-top: 1px solid var(--border);
-      background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(37, 99, 235, 0.07) 0%, transparent 70%);
-    }
-
-    .nitro-section h2 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(2rem, 5vw, 3.8rem);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      margin-bottom: 1rem;
-    }
-
-    .nitro-section h2 span { color: var(--blue-soft); }
-
-    .nitro-section p {
-      color: var(--muted);
-      font-size: .88rem;
-      line-height: 1.9;
-      max-width: 480px;
-      margin: 0 auto 2.5rem;
-    }
-
-    .nitro-cta-big {
-      display: inline-flex;
-      align-items: center;
-      gap: 1.2rem;
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 1rem 2rem;
-      cursor: pointer;
-      background: transparent;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: .8rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      transition: border-color .3s, background .3s;
-    }
-
-    .nitro-cta-big:hover {
-      border-color: var(--blue);
-      background: rgba(37, 99, 235, 0.07);
-    }
-
-    .orb-sm {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, var(--blue-soft), var(--blue) 60%, #1e3a8a);
-      animation: orbPulse 2.5s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes orbPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,.4), 0 0 20px rgba(37,99,235,.2) }
-      50%       { box-shadow: 0 0 0 10px rgba(37,99,235,.04), 0 0 40px rgba(37,99,235,.4) }
-    }
-
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
-      flex-wrap: wrap;
-      margin-top: 3.5rem;
-      padding: 0 2rem;
-    }
-
-    .step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .6rem;
-      max-width: 150px;
-    }
-
-    .step-icon {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-    }
-
-    .step-num {
-      font-size: .6rem;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-    }
-
-    .step-label {
+    .feature-desc {
       font-size: .75rem;
       color: var(--muted);
-      text-align: center;
-      line-height: 1.5;
+      line-height: 1.7;
     }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      font-size: .68rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    footer span { color: var(--blue-soft); }
 
     /* FLOATING ORB */
     .orb-float {
@@ -539,31 +284,31 @@
       font-size: .58rem;
       letter-spacing: .15em;
       text-transform: uppercase;
-      color: var(--blue-soft);
-      background: rgba(10, 11, 15, .9);
+      color: var(--purple-soft);
+      background: rgba(8, 9, 14, .92);
       border: 1px solid var(--border);
       padding: .28rem .8rem;
       border-radius: 100px;
       backdrop-filter: blur(8px);
       opacity: 0;
-      animation: up .5s 1s forwards;
+      animation: up .5s 1.2s forwards;
       white-space: nowrap;
     }
 
     .orb-btn {
-      width: 64px; height: 64px;
+      width: 68px; height: 68px;
       border-radius: 50%;
       cursor: pointer;
       border: none;
-      background: radial-gradient(circle at 35% 35%, var(--blue-soft), var(--blue) 55%, #1e3a8a);
+      background: radial-gradient(circle at 35% 35%, var(--purple-soft), var(--purple) 55%, #3B0764);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
-      animation: orbPulse 2.5s ease-in-out infinite, up .5s .8s both;
+      font-size: 1.5rem;
+      animation: orbPulse 2.5s ease-in-out infinite, up .5s 1s both;
       transition: transform .2s;
       position: relative;
-      box-shadow: 0 0 0 0 rgba(37,99,235,.5), 0 0 24px rgba(37,99,235,.25), inset 0 1px 0 rgba(255,255,255,.15);
+      box-shadow: 0 0 0 0 rgba(124,58,237,.5), 0 0 28px rgba(124,58,237,.3), inset 0 1px 0 rgba(255,255,255,.15);
     }
 
     .orb-btn:hover  { transform: scale(1.07); }
@@ -574,15 +319,19 @@
       content: '';
       position: absolute;
       border-radius: 50%;
-      border: 1px solid rgba(37, 99, 235, .35);
+      border: 1px solid rgba(124, 58, 237, .4);
       animation: ring 2.5s ease-out infinite;
     }
-
     .orb-btn::after { animation-delay: 1.25s; }
 
     @keyframes ring {
-      0%   { width: 64px; height: 64px; opacity: .5; top: 0; left: 0 }
-      100% { width: 120px; height: 120px; opacity: 0; top: -28px; left: -28px }
+      0%   { width: 68px; height: 68px; opacity: .5; top: 0; left: 0 }
+      100% { width: 130px; height: 130px; opacity: 0; top: -31px; left: -31px }
+    }
+
+    @keyframes orbPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,.4), 0 0 24px rgba(124,58,237,.2) }
+      50%       { box-shadow: 0 0 0 12px rgba(124,58,237,.04), 0 0 48px rgba(124,58,237,.45) }
     }
 
     /* MODAL */
@@ -590,8 +339,8 @@
       position: fixed;
       inset: 0;
       z-index: 300;
-      background: rgba(5, 6, 10, .94);
-      backdrop-filter: blur(18px);
+      background: rgba(4, 4, 8, .95);
+      backdrop-filter: blur(20px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -603,12 +352,12 @@
     .modal-bg.open { opacity: 1; pointer-events: all; }
 
     .modal {
-      width: min(460px, 94vw);
+      width: min(480px, 95vw);
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2.2rem 2rem;
-      transform: translateY(28px) scale(.98);
+      border-radius: 6px;
+      padding: 2.4rem 2.2rem 2rem;
+      transform: translateY(30px) scale(.97);
       transition: transform .35s;
       position: relative;
     }
@@ -617,92 +366,94 @@
 
     .close-btn {
       position: absolute;
-      top: .9rem; right: 1rem;
+      top: 1rem; right: 1.2rem;
       cursor: pointer;
       background: none;
       border: none;
       color: var(--muted);
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       line-height: 1;
       transition: color .2s;
     }
+    .close-btn:hover { color: var(--purple-soft); }
 
-    .close-btn:hover { color: var(--blue-soft); }
-
-    .nitro-head {
+    .prof-head {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: .5rem;
-      margin-bottom: 1.8rem;
+      gap: .6rem;
+      margin-bottom: 2rem;
     }
 
-    .nitro-avatar-orb {
-      width: 68px; height: 68px;
+    .prof-avatar {
+      width: 76px; height: 76px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, var(--blue-soft), var(--blue) 55%, #1e3a8a);
+      background: radial-gradient(circle at 35% 35%, var(--purple-soft), var(--purple) 55%, #3B0764);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
-      box-shadow: 0 0 24px rgba(37, 99, 235, .35);
+      font-size: 1.8rem;
+      box-shadow: 0 0 28px rgba(124, 58, 237, .4);
       transition: box-shadow .3s;
     }
 
-    .nitro-avatar-orb.listening { animation: glowListen 1s ease-in-out infinite; }
-    .nitro-avatar-orb.speaking  { animation: glowSpeak .7s ease-in-out infinite; }
+    .prof-avatar.listening { animation: glowListen 1s ease-in-out infinite; }
+    .prof-avatar.speaking  { animation: glowSpeak .7s ease-in-out infinite; }
 
     @keyframes glowListen {
-      0%, 100% { box-shadow: 0 0 16px rgba(37,99,235,.3) }
-      50%       { box-shadow: 0 0 52px rgba(37,99,235,.8) }
+      0%, 100% { box-shadow: 0 0 18px rgba(124,58,237,.35) }
+      50%       { box-shadow: 0 0 60px rgba(124,58,237,.9) }
     }
 
     @keyframes glowSpeak {
-      0%, 100% { box-shadow: 0 0 20px rgba(37,99,235,.4); transform: scale(1) }
-      50%       { box-shadow: 0 0 64px rgba(37,99,235,.95); transform: scale(1.04) }
+      0%, 100% { box-shadow: 0 0 22px rgba(124,58,237,.45); transform: scale(1) }
+      50%       { box-shadow: 0 0 72px rgba(124,58,237,1); transform: scale(1.05) }
     }
 
-    .nitro-name-tag {
+    .prof-name {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-      letter-spacing: .1em;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: .12em;
       text-transform: uppercase;
-      color: var(--blue-soft);
+      background: linear-gradient(135deg, var(--gold-soft), var(--purple-soft));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .nitro-status {
+    .prof-status {
       font-size: .63rem;
       letter-spacing: .2em;
       text-transform: uppercase;
-      color: var(--blue-soft);
+      color: var(--purple-soft);
       min-height: 1em;
-      opacity: .8;
+      opacity: .85;
     }
 
     .chat {
-      max-height: 220px;
+      max-height: 240px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: .7rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.6rem;
       scrollbar-width: thin;
       scrollbar-color: var(--border) transparent;
     }
 
     .bubble {
       max-width: 88%;
-      padding: .75rem 1rem;
-      font-size: .8rem;
-      line-height: 1.7;
-      border-radius: 2px;
+      padding: .8rem 1.1rem;
+      font-size: .82rem;
+      line-height: 1.75;
+      border-radius: 3px;
       animation: up .3s ease;
     }
 
     .bubble-nitro {
-      background: rgba(37, 99, 235, .08);
-      border-left: 2px solid var(--blue);
+      background: rgba(124, 58, 237, .08);
+      border-left: 2px solid var(--purple);
       align-self: flex-start;
     }
 
@@ -721,25 +472,24 @@
     }
 
     .end-btn {
-      width: 58px; height: 58px;
+      width: 60px; height: 60px;
       border-radius: 50%;
       cursor: pointer;
       border: none;
-      background: linear-gradient(135deg, #c0392b, #e74c3c);
+      background: linear-gradient(135deg, #be123c, #e11d48);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.4rem;
-      box-shadow: 0 0 20px rgba(192, 57, 43, .3);
+      box-shadow: 0 0 20px rgba(190, 18, 60, .3);
       transition: transform .2s;
     }
-
     .end-btn:hover  { transform: scale(1.06); }
     .end-btn:active { transform: scale(.93); }
 
     .mic-label {
       text-align: center;
-      margin-top: .9rem;
+      margin-top: 1rem;
       font-size: .63rem;
       letter-spacing: .15em;
       text-transform: uppercase;
@@ -751,394 +501,130 @@
       to   { opacity: 1; transform: translateY(0) }
     }
 
-    /* GALLERY STRIP */
-    .gallery-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      height: 320px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      overflow: hidden;
-    }
-
-    .gallery-item {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .gallery-item + .gallery-item {
-      border-left: 1px solid var(--border);
-    }
-
-    .gallery-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: grayscale(25%) brightness(0.6);
-      transition: filter .5s, transform .5s;
-      display: block;
-    }
-
-    .gallery-item:hover img {
-      filter: grayscale(0%) brightness(0.8);
-      transform: scale(1.05);
-    }
-
-    .gallery-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 1.5rem;
-      background: linear-gradient(to top, rgba(10,11,15,.85) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .gallery-label {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--text);
-    }
-
-    .gallery-sub {
-      font-size: .65rem;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--blue-soft);
-      margin-top: .25rem;
-    }
-
-    @media(max-width:680px) {
-      header { padding: 1.2rem 1.5rem; }
-      nav { display: none; }
-      #servicios { padding: 3rem 1.5rem 4rem; }
-      .nitro-section { padding: 3rem 1.5rem 5rem; }
-      .steps { gap: 2rem; }
-      .gallery-strip { grid-template-columns: 1fr; height: auto; }
-      .gallery-item { height: 200px; }
-      .gallery-item + .gallery-item { border-left: none; border-top: 1px solid var(--border); }
+    @media (max-width: 680px) {
+      .hero-title { font-size: clamp(3rem, 16vw, 6rem); }
+      .features { flex-direction: column; align-items: center; }
+      .feature { border-right: none; border-bottom: 1px solid var(--border); max-width: 100%; width: 100%; }
+      .feature:last-child { border-bottom: none; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🔧</div>
-      Taller el <em>Pistón</em>
-    </div>
-    <nav>
-      <a href="#servicios">Servicios</a>
-      <a href="#agendar">Sacar turno</a>
-    </nav>
-  </header>
+  <!-- Ambient background -->
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-1"></div>
+    <div class="ambient-blob ambient-blob-2"></div>
+    <div class="ambient-blob ambient-blob-3"></div>
+  </div>
+  <div class="grid-bg"></div>
 
   <!-- HERO -->
   <section class="hero">
-    <p class="hero-eyebrow">⚙ Mecánica Integral · Salta Capital</p>
-    <h1>Tu vehículo,<br><em>en manos expertas</em></h1>
-    <p class="hero-sub">Service, cambio de aceite, filtros, bujías y más. Atención profesional para autos y motos en
-      Vicente López 845, Salta.</p>
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Seminario de Inteligencia Artificial
+    </div>
+    <h1 class="hero-title">
+      <span class="line-1">Super</span>
+      <span class="line-2">Profesor</span>
+      <span class="line-3">de IA</span>
+    </h1>
+    <p class="hero-sub">
+      Una inteligencia artificial con conocimientos enciclopédicos lista para desafiarte.<br>
+      ¿Cuánto sabés de historia, ciencia, tecnología e IA?
+    </p>
     <div class="hero-cta">
       <button class="cta-main" onclick="openModal()">
-        <div class="cta-orb-mini">⚡</div>
-        Hablar con Nitro para sacar turno
+        <div class="cta-mini-orb">🎓</div>
+        Hablar con el Profesor
       </button>
-      <span class="cta-hint">o mirá nuestros servicios abajo</span>
+      <span class="cta-hint">Hacé clic y hablá por micrófono</span>
     </div>
   </section>
 
-  <!-- DIVIDER -->
-  <div class="divider">
-    <div class="line"></div>
-    <span class="label">Nuestros Servicios</span>
-    <div class="line"></div>
-  </div>
-
-  <!-- SERVICES -->
-  <section id="servicios">
-    <div class="services-header">
-      <h2>¿Qué <span>hacemos</span>?</h2>
-      <p>Elegí tu vehículo · Nitro te ayuda a sacar tu turno en segundos</p>
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feature">
+      <span class="feature-icon">🧠</span>
+      <div class="feature-label">Conocimiento Total</div>
+      <div class="feature-desc">Historia, ciencia, IA, tecnología, cultura general y mucho más</div>
     </div>
-
-    <div class="vehicle-tabs">
-      <button class="tab-btn active" onclick="showTab('autos', this)">🚗 &nbsp;Autos</button>
-      <button class="tab-btn" onclick="showTab('motos', this)">🏍 &nbsp;Motos</button>
+    <div class="feature">
+      <span class="feature-icon">🎯</span>
+      <div class="feature-label">Quiz Interactivo</div>
+      <div class="feature-desc">Preguntas adaptadas a tu nivel, con pistas si te trabás</div>
     </div>
-
-    <!-- AUTOS -->
-    <div class="vehicle-panel active" id="panel-autos">
-      <div class="services-grid">
-
-        <div class="service-card">
-          <span class="card-emoji">🛢</span>
-          <div class="card-num">Servicio 01</div>
-          <div class="card-title">Aceite & Filtros</div>
-          <ul class="price-list">
-            <li><span class="price-name">Cambio de aceite</span><span class="price-dur">45 min</span><span class="price-val">$90.000</span></li>
-            <li><span class="price-name">Filtro de aceite</span><span class="price-dur">15 min</span><span class="price-val">$28.000</span></li>
-            <li><span class="price-name">Filtro de aire</span><span class="price-dur">15 min</span><span class="price-val">$22.000</span></li>
-            <li><span class="price-name">Filtro de combustible</span><span class="price-dur">20 min</span><span class="price-val">$30.000</span></li>
-          </ul>
-        </div>
-
-        <div class="service-card">
-          <span class="card-emoji">⚙️</span>
-          <div class="card-num">Servicio 02</div>
-          <div class="card-title">Service Completo</div>
-          <ul class="price-list">
-            <li><span class="price-name">Service básico</span><span class="price-dur">1h 30min</span><span class="price-val">$150.000</span></li>
-            <li><span class="price-name">Service completo</span><span class="price-dur">2h 30min</span><span class="price-val">$220.000</span></li>
-            <li><span class="price-name">Cambio de bujías</span><span class="price-dur">1 hora</span><span class="price-val">$65.000</span></li>
-            <li><span class="price-name">Regulación de motor</span><span class="price-dur">1h 30min</span><span class="price-val">$120.000</span></li>
-          </ul>
-        </div>
-
-        <div class="service-card">
-          <span class="card-emoji">🛞</span>
-          <div class="card-num">Servicio 03</div>
-          <div class="card-title">Frenos & Dirección</div>
-          <ul class="price-list">
-            <li><span class="price-name">Revisión de frenos</span><span class="price-dur">45 min</span><span class="price-val">$75.000</span></li>
-            <li><span class="price-name">Pastillas de freno</span><span class="price-dur">1 hora</span><span class="price-val">$110.000</span></li>
-            <li><span class="price-name">Alineación</span><span class="price-dur">45 min</span><span class="price-val">$80.000</span></li>
-            <li><span class="price-name">Balanceo (4 ruedas)</span><span class="price-dur">45 min</span><span class="price-val">$70.000</span></li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MOTOS -->
-    <div class="vehicle-panel" id="panel-motos">
-      <div class="services-grid">
-
-        <div class="service-card">
-          <span class="card-emoji">🛢</span>
-          <div class="card-num">Servicio 01</div>
-          <div class="card-title">Aceite & Filtros</div>
-          <ul class="price-list">
-            <li><span class="price-name">Cambio de aceite</span><span class="price-dur">30 min</span><span class="price-val">$45.000</span></li>
-            <li><span class="price-name">Filtro de aceite</span><span class="price-dur">15 min</span><span class="price-val">$18.000</span></li>
-            <li><span class="price-name">Filtro de aire</span><span class="price-dur">15 min</span><span class="price-val">$15.000</span></li>
-            <li><span class="price-name">Filtro de combustible</span><span class="price-dur">15 min</span><span class="price-val">$18.000</span></li>
-          </ul>
-        </div>
-
-        <div class="service-card">
-          <span class="card-emoji">⚙️</span>
-          <div class="card-num">Servicio 02</div>
-          <div class="card-title">Service Completo</div>
-          <ul class="price-list">
-            <li><span class="price-name">Service básico</span><span class="price-dur">1 hora</span><span class="price-val">$90.000</span></li>
-            <li><span class="price-name">Service completo</span><span class="price-dur">1h 30min</span><span class="price-val">$140.000</span></li>
-            <li><span class="price-name">Cambio de bujía</span><span class="price-dur">20 min</span><span class="price-val">$28.000</span></li>
-            <li><span class="price-name">Regulación de carburador</span><span class="price-dur">45 min</span><span class="price-val">$55.000</span></li>
-          </ul>
-        </div>
-
-        <div class="service-card">
-          <span class="card-emoji">⛓️</span>
-          <div class="card-num">Servicio 03</div>
-          <div class="card-title">Transmisión & Frenos</div>
-          <ul class="price-list">
-            <li><span class="price-name">Ajuste y lubricación de cadena</span><span class="price-dur">20 min</span><span class="price-val">$25.000</span></li>
-            <li><span class="price-name">Cambio de cadena y piñones</span><span class="price-dur">1 hora</span><span class="price-val">$95.000</span></li>
-            <li><span class="price-name">Revisión de frenos</span><span class="price-dur">30 min</span><span class="price-val">$40.000</span></li>
-            <li><span class="price-name">Pastillas / zapatas</span><span class="price-dur">45 min</span><span class="price-val">$65.000</span></li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-
-  </section>
-
-  <!-- GALLERY STRIP -->
-  <div class="gallery-strip">
-    <div class="gallery-item">
-      <img
-        src="https://images.unsplash.com/photo-1530046339160-ce3e530c7d2f?auto=format&fit=crop&w=900&q=80"
-        alt="Mecánico trabajando en motor"
-        loading="lazy">
-      <div class="gallery-overlay">
-        <div class="gallery-label">Manos que saben</div>
-        <div class="gallery-sub">Mecánica de precisión</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <img
-        src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=900&q=80"
-        alt="Auto en taller"
-        loading="lazy">
-      <div class="gallery-overlay">
-        <div class="gallery-label">Tu auto, en forma</div>
-        <div class="gallery-sub">Service integral</div>
-      </div>
-    </div>
-    <div class="gallery-item">
-      <img
-        src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=900&q=80"
-        alt="Moto en taller"
-        loading="lazy">
-      <div class="gallery-overlay">
-        <div class="gallery-label">Motos a full</div>
-        <div class="gallery-sub">Cadena, frenos, motor</div>
-      </div>
+    <div class="feature">
+      <span class="feature-icon">🎤</span>
+      <div class="feature-label">Voz en Tiempo Real</div>
+      <div class="feature-desc">Hablás, él te escucha y responde al instante con voz</div>
     </div>
   </div>
-
-  <!-- NITRO SECTION -->
-  <section class="nitro-section" id="agendar">
-    <h2>Sacá turno con <span>Nitro</span></h2>
-    <p>Nitro es nuestro asistente de inteligencia artificial. Hablale por voz, él te ayuda a elegir el servicio para tu
-      auto o moto y reserva tu turno al instante.</p>
-    <button class="nitro-cta-big" onclick="openModal()">
-      <div class="orb-sm"></div>
-      Comenzar a hablar con Nitro
-    </button>
-    <div class="steps">
-      <div class="step">
-        <div class="step-icon">🎤</div>
-        <div class="step-num">Paso 1</div>
-        <div class="step-label">Tocá el orb y hablá</div>
-      </div>
-      <div class="step">
-        <div class="step-icon">🚗</div>
-        <div class="step-num">Paso 2</div>
-        <div class="step-label">Nitro te pregunta qué vehículo tenés</div>
-      </div>
-      <div class="step">
-        <div class="step-icon">🔧</div>
-        <div class="step-num">Paso 3</div>
-        <div class="step-label">Elegís el servicio que necesitás</div>
-      </div>
-      <div class="step">
-        <div class="step-icon">📅</div>
-        <div class="step-num">Paso 4</div>
-        <div class="step-label">Elegís día y horario</div>
-      </div>
-      <div class="step">
-        <div class="step-icon">✅</div>
-        <div class="step-num">Paso 5</div>
-        <div class="step-label">Turno confirmado por WhatsApp</div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <span>Taller el Pistón</span> · Mecánica Integral · Vicente López 845, Salta Capital<br>
-    <span style="opacity:.5;display:block;margin-top:.4rem">Lunes a Sábado · 9:00 a 18:00 hs</span>
-  </footer>
 
   <!-- FLOATING ORB -->
   <div class="orb-float">
-    <span class="orb-tag">Sacar turno con Nitro</span>
-    <button class="orb-btn" onclick="openModal()">⚡</button>
+    <span class="orb-tag">Hablar con el Profesor</span>
+    <button class="orb-btn" onclick="openModal()">🎓</button>
   </div>
 
   <!-- VOICE MODAL -->
   <div class="modal-bg" id="modalBg" onclick="bgClick(event)">
     <div class="modal">
       <button class="close-btn" onclick="closeModal()">×</button>
-      <div class="nitro-head">
-        <div class="nitro-avatar-orb" id="nitroOrb">⚡</div>
-        <div class="nitro-name-tag">Nitro</div>
-        <div class="nitro-status" id="nitroStatus">Conectando…</div>
+      <div class="prof-head">
+        <div class="prof-avatar" id="profOrb">🎓</div>
+        <div class="prof-name">Profesor MAX</div>
+        <div class="prof-status" id="profStatus">Conectando…</div>
       </div>
       <div class="chat" id="chat"></div>
       <div class="controls">
-        <button class="end-btn" onclick="closeModal()" title="Terminar llamada">📵</button>
+        <button class="end-btn" onclick="closeModal()" title="Terminar">📵</button>
       </div>
-      <p class="mic-label" id="micLabel">Hablá · Nitro te escucha en tiempo real</p>
+      <p class="mic-label" id="micLabel">Hablá · El Profesor te escucha en tiempo real</p>
     </div>
   </div>
 
   <script>
-    // ── TABS ──────────────────────────────────────────────────────────────
-    function showTab(vehicle, btn) {
-      document.querySelectorAll('.vehicle-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('panel-' + vehicle).classList.add('active');
-      btn.classList.add('active');
-    }
-
     // ── SYSTEM PROMPT ─────────────────────────────────────────────────────
     const SYSTEM = `
-Sos Nitro, el asistente virtual del Taller el Pistón, un taller mecánico integral ubicado en Vicente López 845, Salta Capital, Argentina.
-Sos directo, confiable, con onda y hablás en español argentino (vos, che, dale).
+Sos el Profesor MAX, una inteligencia artificial con conocimientos enciclopédicos en historia, ciencia, tecnología, inteligencia artificial, cultura general, matemáticas y geografía.
 
-SERVICIOS PARA AUTOS:
+Tu misión hoy es conducir un juego de preguntas y respuestas con alumnos de 17-18 años que están terminando la secundaria en Argentina. Esto ocurre en un seminario de inteligencia artificial donde los alumnos van a pasar de a uno a charlar con vos.
 
-ACEITE Y FILTROS:
-- Cambio de aceite: $90.000 – 45 min
-- Filtro de aceite: $28.000 – 15 min
-- Filtro de aire: $22.000 – 15 min
-- Filtro de combustible: $30.000 – 20 min
+TU PERSONALIDAD:
+- Sos carismático, energético y un poco dramático, como el conductor de un programa de preguntas.
+- Hablás en español argentino con naturalidad: vos, che, dale, bárbaro, qué groso, genial.
+- Sos exigente pero alentador. Si se equivocan, los animás a seguir.
+- Generás suspenso antes de revelar si una respuesta es correcta.
+- Usás humor sutil para hacer la experiencia más divertida.
 
-SERVICE COMPLETO:
-- Service básico (aceite + filtros): $150.000 – 1h 30min
-- Service completo (básico + bujías + revisión general): $220.000 – 2h 30min
-- Cambio de bujías: $65.000 – 1 hora
-- Regulación de motor: $120.000 – 1h 30min
+FLUJO DEL JUEGO:
+1. Saludá al alumno con energía y pedile cómo se llama.
+2. Explicale las reglas brevemente: le vas a hacer preguntas de distintos temas, puede pedir una pista si se traba.
+3. Arrancá con una pregunta de dificultad media y ajustá la dificultad según cómo responda.
+4. Hacé entre 5 y 8 preguntas por sesión.
+5. Después de cada respuesta, confirmá si es correcta o no con emoción y una frase corta de contexto.
+6. Al final, hacé un breve cierre elogioso de cómo le fue.
 
-FRENOS Y DIRECCIÓN:
-- Revisión de frenos: $75.000 – 45 min
-- Cambio de pastillas de freno: $110.000 – 1 hora
-- Alineación: $80.000 – 45 min
-- Balanceo (4 ruedas): $70.000 – 45 min
+TEMAS (rotá entre ellos, no repitas el mismo dos veces seguidas):
+- Inteligencia Artificial: qué es ChatGPT, modelos de lenguaje, machine learning, impacto en la sociedad, empresas como OpenAI, Google, Anthropic.
+- Historia Argentina: presidentes, guerras, independencia, personajes clave, Malvinas.
+- Historia Mundial: Segunda Guerra Mundial, Revolución Francesa, Revolución Industrial, personajes históricos.
+- Ciencias: física básica, biología, astronomía, ADN, Big Bang, velocidad de la luz.
+- Geografía: capitales, países, océanos, ríos, accidentes geográficos.
+- Tecnología y actualidad: redes sociales, inventos importantes, empresas tech, internet.
+- Cultura general: deportes, cine, música, Premios Nobel, Juegos Olímpicos.
 
----
-
-SERVICIOS PARA MOTOS:
-
-ACEITE Y FILTROS:
-- Cambio de aceite: $45.000 – 30 min
-- Filtro de aceite: $18.000 – 15 min
-- Filtro de aire: $15.000 – 15 min
-- Filtro de combustible: $18.000 – 15 min
-
-SERVICE COMPLETO:
-- Service básico: $90.000 – 1 hora
-- Service completo: $140.000 – 1h 30min
-- Cambio de bujía: $28.000 – 20 min
-- Regulación de carburador: $55.000 – 45 min
-
-TRANSMISIÓN Y FRENOS:
-- Ajuste y lubricación de cadena: $25.000 – 20 min
-- Cambio de cadena y piñones: $95.000 – 1 hora
-- Revisión de frenos: $40.000 – 30 min
-- Cambio de pastillas / zapatas: $65.000 – 45 min
-
----
-
-HORARIOS: Lunes a Sábado de 9:00 a 18:00 hs.
-DIRECCIÓN: Vicente López 845, Salta Capital.
-RECORDATORIO: Una vez confirmado el turno, le llega un mensaje por WhatsApp.
-
-FLUJO DE AGENDADO:
-1. Saludar y presentarte como Nitro del Taller el Pistón.
-2. Preguntar si tiene auto o moto.
-3. Preguntar la marca y modelo del vehículo.
-4. Preguntar qué servicio necesita. Si tiene dudas, explicar brevemente las diferencias.
-5. Preguntar qué día y horario prefiere.
-6. Pedir su nombre y apellido completo.
-7. Pedir su número de celular para el recordatorio por WhatsApp.
-8. Cuando tengas TODOS los datos (nombre, celular, vehículo con marca y modelo, servicio, fecha y hora), DEBÉS usar la función agendar_turno. Esto es OBLIGATORIO antes de confirmar.
-9. Una vez ejecutada la función, confirmá el turno con entusiasmo y recordale la dirección del taller.
-
-REGLAS:
-- Respuestas CORTAS: máximo 2 o 3 oraciones.
-- Hablá en texto corrido, sin listas ni asteriscos.
-- Sé natural y directo, no robótico.
-- SIEMPRE usá agendar_turno cuando tengas todos los datos.
+REGLAS IMPORTANTES:
+- Respuestas CORTAS: máximo 3 oraciones.
+- UNA sola pregunta a la vez, esperá la respuesta antes de hacer la siguiente.
+- Si el alumno no sabe, dale una pista antes de revelar la respuesta.
+- No arrancés con preguntas muy difíciles, empezá suave y aumentá la dificultad.
+- Si el alumno dice algo gracioso o interesante, reaccioná con naturalidad.
+- Si alguien te pregunta qué sos, respondé que sos una IA construida con la API de Gemini de Google, diseñada para este seminario.
+- Recordá que hay un disertante mirando y otros alumnos esperando, así que sé dinámico y entretenido.
 `.trim();
 
     let ws = null;
@@ -1193,24 +679,7 @@ REGLAS:
                 }
               }
             },
-            system_instruction: { parts: [{ text: SYSTEM }] },
-            tools: [{
-              function_declarations: [{
-                name: 'agendar_turno',
-                description: 'Registra el turno en la agenda cuando el cliente confirma todos sus datos. OBLIGATORIO llamarla antes de confirmar el turno.',
-                parameters: {
-                  type: 'OBJECT',
-                  properties: {
-                    nombre:     { type: 'STRING', description: 'Nombre y apellido completo del cliente' },
-                    celular:    { type: 'STRING', description: 'Número de celular con código de área' },
-                    vehiculo:   { type: 'STRING', description: 'Tipo, marca y modelo del vehículo. Ej: Auto Toyota Corolla, Moto Honda CB 250' },
-                    servicio:   { type: 'STRING', description: 'Servicio elegido con su precio. Ej: Service completo – $24.000' },
-                    fecha_hora: { type: 'STRING', description: 'Fecha y hora del turno. Ej: Martes 22/04 a las 10:00' }
-                  },
-                  required: ['nombre', 'celular', 'vehiculo', 'servicio', 'fecha_hora']
-                }
-              }]
-            }]
+            system_instruction: { parts: [{ text: SYSTEM }] }
           }
         }));
         setStatus('Esperando sesión…');
@@ -1245,15 +714,6 @@ REGLAS:
         }
         if (msg.serverContent?.inputTranscription?.text && msg.serverContent.inputTranscription.finished) {
           addBubble('user', msg.serverContent.inputTranscription.text);
-        }
-
-        if (msg.toolCall) {
-          for (const fc of msg.toolCall.functionCalls || []) {
-            if (fc.name === 'agendar_turno') {
-              console.log('agendar_turno:', fc.args);
-              agendarEnSheets(fc.id, fc.args);
-            }
-          }
         }
 
         if (msg.serverContent?.turnComplete) {
@@ -1370,40 +830,11 @@ REGLAS:
       c.appendChild(d);
       c.scrollTop = c.scrollHeight;
     }
-    function setStatus(t) { document.getElementById('nitroStatus').textContent = t; }
+    function setStatus(t) { document.getElementById('profStatus').textContent = t; }
     function setState(s) {
-      const o = document.getElementById('nitroOrb');
-      o.className = 'nitro-avatar-orb';
+      const o = document.getElementById('profOrb');
+      o.className = 'prof-avatar';
       if (s !== 'idle') o.classList.add(s);
-    }
-
-    // ── AGENDAR EN GOOGLE SHEETS ───────────────────────────────────────────
-    async function agendarEnSheets(callId, args) {
-      let result = { success: true, message: 'Turno agendado correctamente' };
-      try {
-        const resp = await fetch('/api/sheets', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(args),
-        });
-        const data = await resp.json();
-        if (!resp.ok) result = { success: false, message: data.error || 'Error al agendar' };
-      } catch (e) {
-        console.error('Error enviando a sheets:', e);
-        result = { success: false, message: 'Error de conexión al agendar' };
-      }
-
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          toolResponse: {
-            functionResponses: [{
-              id: callId,
-              name: 'agendar_turno',
-              response: result
-            }]
-          }
-        }));
-      }
     }
   </script>
 </body>
